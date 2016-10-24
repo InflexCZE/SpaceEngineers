@@ -33,7 +33,7 @@ namespace VRage.Scripting.Analyzers
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(Analyze,
-                //SyntaxKind.FinallyClause,
+                SyntaxKind.DestructorDeclaration,
                 SyntaxKind.AliasQualifiedName,
                 SyntaxKind.QualifiedName,
                 SyntaxKind.GenericName,
@@ -61,6 +61,15 @@ namespace VRage.Scripting.Analyzers
                     context.ReportDiagnostic(diagnostic);
                 }
                 return;
+            }
+            
+            if(node.Kind() == SyntaxKind.DestructorDeclaration)
+            {
+                if(this.m_target == MyWhitelistTarget.Ingame)
+                {
+                    var diagnostic = Diagnostic.Create(PROHIBITED_LANGUAGE_ELEMENT_RULE, node.GetLocation(), "Finalizer");
+                    context.ReportDiagnostic(diagnostic);
+                }
             }
 
             // We'll check the qualified names on their own.
